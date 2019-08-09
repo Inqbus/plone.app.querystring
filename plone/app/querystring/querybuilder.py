@@ -52,7 +52,7 @@ class QueryBuilder(BrowserView):
         """Create a zope catalog query and return results.
 
         :param query: The querystring to be parsed into a zope catalog query.
-        :type query: dictionary
+        :type query: List of dict
 
         :param batch: Return a plone.batching ``Batch`` instead of a zope
                       catalog result.
@@ -64,13 +64,13 @@ class QueryBuilder(BrowserView):
         :param b_size: Size of the batch.
         :type b_size: integer
 
-        :param sort_on: Name of the sort index for sorting the results.
-        :type sort_on: string
+        :param sort_on: Sort indexes for sorting the results.
+        :type sort_on: list of string
 
         :param sort_order: The order of the result sorting. Either 'ascending'
                            or 'descending'. 'reverse' is an alias equivalent
                            to 'descending'.
-        :type sort_order: string
+        :type sort_order: list of string
 
         :param limit: Limit the results.
         :type limit: integer

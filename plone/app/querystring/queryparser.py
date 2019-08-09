@@ -53,11 +53,41 @@ def parseFormquery(context, formquery, sort_on=None, sort_order=None):
     # Add sorting (sort_on and sort_order) to the query
     if sort_on:
         catalog = getToolByName(context, 'portal_catalog')
-        # I get crazy sort_ons like '194' or 'null'.
-        if sort_on in catalog.indexes():
-            query['sort_on'] = sort_on
-            if sort_order:
-                query['sort_order'] = sort_order
+        # if the sort order is only a string containing the index to sort after:
+        if isinstance(sort_on, str):
+            # check if the index exists
+            if sort_on in catalog.indexes():
+                query['sort_on'] = sort_on
+                # if a sort oder exists
+                if sort_order and isinstance(sort_order, str):
+                    query['sort_order'] = sort_order
+                else:
+                    raise Exception('Incorrect sort_on or sort_order data')
+        # if the sort order is a list of indexes
+        elif (sort_on, list):
+            # if there is no sort order given, just sort after the exiting indexes
+            if not sort_order:
+                sort_idxs = []
+                for sort_idx in sort_on:
+                    # check for the existance of the index
+                    if sort_idx in catalog.indexes():
+                        sort_idxs.append(sort_idx)
+                query['sort_on'] = sort_idx
+            # Sort indexes and sort order lists are given
+            else:
+                if len(sort_on) != len(sort_order):
+                    raise Exception('Sort_on and Sort_order lists with different lengths')
+                sort_idxs = []
+                sort_ords = []
+                for sort_idx, sort_ord in zip(sort_on, sort_order):
+                    if sort_idx in catalog.indexes():
+                        sort_idxs.append(sort_idx)
+                        sort_ords.append(sort_ord)
+                query['sort_on'] = sort_idx
+                query['sort_order'] = sort_ords
+        else :
+            raise Exception('Incorrect sort_on or sort_order data')
+
     return query
 
 
